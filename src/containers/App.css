@@ -1,0 +1,16 @@
+.App {
+  text-align: center;
+  font-family: 'Roboto', sans-serif;
+}
+
+.App-header {
+  background-color: #222;
+  height: 50px;
+  padding: 10px;
+  color: white;
+  margin-bottom: .5em;
+}
+
+.App-title {
+  font-size: 1.5em;
+}
