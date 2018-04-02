@@ -296,7 +296,7 @@ class App extends Component {
         {victory}
 
 
-        <div style={{display: 'inline-block', float: 'right', marginRight: '1em'}}>
+        <div id='debugTools' style={{display: 'inline-block', float: 'right', marginRight: '1em'}}>
           <Toggle label='Spymaster' onToggle={this.handleToggleSpymaster} toggled={this.state.isSpymaster}/>
           <Toggle label='Debug' onToggle={this.handleToggleDebug} toggled={this.state.isDebug}/>
         </div>
