@@ -1,7 +1,9 @@
 import React from 'react';
 
-import RaisedButton from 'material-ui/RaisedButton'
+// Material UI
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
+import RaisedButton from 'material-ui/RaisedButton'
+import Paper from 'material-ui/Paper';
 
 import './gameCard.css';
 
@@ -32,15 +34,19 @@ const gameCard = props => {
     black: 'gray'
   };
 
+  const formatWord = word => word.toUpperCase().replace('_', ' ');
+
   const cards = props.board.map((group, i) => {
 
 
     const style = {
-      border: '3px solid black',
+      border: '4px solid saddlebrown',
+      borderRadius: 10,
+      backgroundColor: 'beige',
     };
 
-    if (props.isSpymaster ) {
-      style.border = `3px solid ${borderColorMap[group.color]}`;
+    if (props.isSpymaster || group.seen) {
+      style.border = `4px solid ${borderColorMap[group.color]}`;
       style.color = borderColorMap[group.color]
     }
 
@@ -52,11 +58,20 @@ const gameCard = props => {
       style.backgroundColor = `rgba(${[255, 0, 0, group.sim]})`
     }
 
-    return <RaisedButton label={group.word.toUpperCase()}
-                         style={style}
-                         className='card'
-                         id={group.word}
-                         onClick={() => props.reveal(i)} />
+    const wordButton = <RaisedButton label={formatWord(group.word)}
+                                     style={style}
+                                     labelStyle={{
+                                       fontSize: '1rem',
+                                       fontWeight: '600',
+                                     }}
+                                     labelColor={props.isSpymaster || group.seen?
+                                       borderColorMap[group.color] : 'brown'}
+                                     className='card'
+                                     id={group.word}
+                                     onClick={() => props.reveal(i)}
+    />;
+
+    return wordButton;
   });
 
   return (

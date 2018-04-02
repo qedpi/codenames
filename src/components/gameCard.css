@@ -1,15 +1,19 @@
 .boardWrapper {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  grid-gap: 10px;
-    margin: 1em;
+    display: grid;
+    /* grid-template-columns: repeat(5, 1fr); */
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-gap: 1rem;
+    margin: 1rem;
 }
 
 .card {
-    padding: 20px;
-    border: 1px solid black;
+    padding: 15px;
     background-color: floralwhite;
-    font-weight: bolder;
+    opacity: .8;
+}
+
+.card:hover {
+    transform: scale(1.05);
 }
 
 .red {
