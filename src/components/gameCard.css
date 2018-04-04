@@ -1,7 +1,7 @@
 .boardWrapper {
     display: grid;
-    /* grid-template-columns: repeat(5, 1fr); */
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(5, 1fr);
+    /* grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); */
     grid-gap: 1rem;
     margin: 1rem;
 }
@@ -18,7 +18,7 @@
 }
 
 .card {
-    padding: 15px;
+    padding: 1rem;
     background-color: floralwhite;
     opacity: .8;
 }
@@ -26,20 +26,3 @@
 .card:hover {
     transform: scale(1.05);
 }
-
-.red {
-    color: red;
-}
-
-.blue {
-    color: blue;
-}
-
-.gray {
-    color: rosybrown;
-}
-
-.black {
-    color: black;
-}
-

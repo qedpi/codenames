@@ -145,12 +145,16 @@ class App extends Component {
     }
 
     if (status === this.state.player + ' won') {
-      play_sound_effect('audio_applause');
+      // play_sound_effect('audio_applause');
     }
 
     this.setState({
       words: words,
       gameStatus: status,
+    }, () => {
+      if (this.state.previous_hints.length === 0) {
+        this.handleSubmit();
+      }
     });
   };
 
@@ -168,12 +172,10 @@ class App extends Component {
       const board = JSON.parse(JSON.stringify(this.state.board));
       board[i].seen = true;
 
-      play_sound_effect(board[i].color === this.state.player ? 'audio_cards' : 'audio_fail');
-
       if (board[i].color === this.state.player) {
         play_sound_effect('audio_cards');
       } else {
-        play_sound_effect('audio_fail');
+        play_sound_effect('audio_cards');
         // Flip over one of opponent's cards (choose first one)
         for (const card of board) {
           if (card.color === otherColor[this.state.player] && !card.seen) {
@@ -239,7 +241,7 @@ class App extends Component {
 
     const victory = (
       <Dialog
-        title={`${this.state.gameStatus} the game!`}
+        title={`${this.state.gameStatus.split(' ')[0]} wins!`}
         actions={actions}
         modal={false}
         open={this.state.gameStatus.includes('won')}

@@ -7,7 +7,7 @@
   background-color: darkred;
   background-blend-mode: color-burn; */
   background: repeat url("../images/circles-light.png");
-  cursor: zoom-in;
+  /* cursor: zoom-in; */
 }
 
 .App-header {
