@@ -214,13 +214,12 @@ class App extends Component {
       <div>
         <p>{this.state.result.targets.join(', ')}</p>
         <p>{JSON.stringify(this.state.result.dist)}</p>
-        <p>{JSON.stringify(this.state.result.allDists)}</p>
       </div>
     ) : null;
 
     const progress = this.state.awaitingServer ?
       <CircularProgress size={20}/> : (
-        <Badge badgeContent={this.state.result.targets.length} primary={true}>
+        <Badge badgeContent={this.state.result.targets.length} secondary={true}>
           {this.state.result.hint}
         </Badge>
       );
