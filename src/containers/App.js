@@ -20,13 +20,15 @@ import MenuItem from 'material-ui/MenuItem';
 // Components
 import WORDS from '../data/words';
 import GameCard from '../components/gameCard';
+import AppHeader from '../components/appHeader';
 
 // CSS
 import './App.css';
 
 
 // Constants
-const SERVER_URL = 'https://codenamesai.herokuapp.com/api/' || 'http://127.0.0.1:5000/api/';
+const SERVER_URL = process.env.NODE_ENV === 'production'?
+  'https://codenamesai.herokuapp.com/api/' : 'http://127.0.0.1:5000/api/';
 const BOARD_SIZE = 25;
 
 const pickWords = () => {
@@ -306,9 +308,7 @@ class App extends Component {
 
     return (
       <div className="App">
-        <header className="App-header">
-          <h1 className="App-title">CODENAMES BOT</h1>
-        </header>
+        <AppHeader/>
 
         {gameControls}
 

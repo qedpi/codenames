@@ -1,0 +1,14 @@
+.App-header {
+    background: radial-gradient(circle, orange, red, #4b0000);
+    height: 55px;
+    padding: 10px;
+    color: white;
+    margin-bottom: .5em;
+}
+
+.App-title {
+    margin: 0;
+    font-family: codenamesFont;
+    font-size: 2.5em;
+    font-weight: 100;
+}
