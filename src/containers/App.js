@@ -18,47 +18,22 @@ import NavigationClose from 'material-ui/svg-icons/navigation/close';
 import MenuItem from 'material-ui/MenuItem';
 
 // Components
-import WORDS from '../data/words';
 import GameCard from '../components/gameCard';
 import AppHeader from '../components/appHeader';
+import GameEnd from '../components/gameEnd';
+import HintHistory from '../components/hintHistory';
+import HintControls from '../components/hintControls'
 
 // CSS
 import './App.css';
 
+// Utils
+import playAudio from '../utils/playAudio'
+import pickWords from '../utils/pickWords'
 
 // Constants
 const SERVER_URL = process.env.NODE_ENV === 'production'?
   'https://codenamesai.herokuapp.com/api/' : 'http://127.0.0.1:5000/api/';
-const BOARD_SIZE = 25;
-
-const pickWords = () => {
-  const words = _.sampleSize(WORDS, BOARD_SIZE);
-
-  let colors = (Array(9).fill('red'))
-    .concat(Array(8).fill('blue'))
-    .concat(Array(1).fill('black'))
-    .concat(Array(7).fill('gray'));
-  colors = _.shuffle(colors);
-
-  return words.map((w, i) => {
-    return {
-      word: w,
-      color: colors[i],
-      seen: false,
-      sim: 0,
-    }
-  })
-};
-
-function play_sound_effect(id) {
-  // makes sure that sound effect plays from start even when it's still playing
-  const aud = document.getElementById(id);
-
-  aud.volume = id === 'audio_fail' ? .01 : .5;
-  aud.pause();
-  aud.currentTime = 0;
-  aud.play();
-}
 
 const initialState = () => {
   return {
@@ -79,8 +54,8 @@ const initialState = () => {
     awaitingServer: false,
     gameStatus: 'playing',
     player: 'red',
-    previous_hints: [],
-    show_drawer: false,
+    previousHints: [],
+    showDrawer: false,
   };
 };
 
@@ -95,12 +70,12 @@ class App extends Component {
   };
 
   handleSubmit = () => {
-    console.log('sent to server');
+    console.log('request hint from server');
     this.setState({
       awaitingServer: true,
     });
 
-    axios.post(SERVER_URL, this.state.words)
+    axios.post(SERVER_URL, {...this.state.words, previousHints: this.state.previousHints.map(_ => _.hint)})
       .then(res => {
         const board = JSON.parse(JSON.stringify(this.state.board));
 
@@ -108,14 +83,14 @@ class App extends Component {
           board[i].sim = dist
         });
 
-        const previous_hints = [...this.state.previous_hints];
-        previous_hints.push({hint: res.data.hint, num: res.data.targets.length});
+        const previousHints = [...this.state.previousHints];
+        previousHints.push({hint: res.data.hint, num: res.data.targets.length});
 
         this.setState({
           result: res.data,
           board,
           awaitingServer: false,
-          previous_hints,
+          previousHints: previousHints,
         }, () => {
           console.log('updated result', this.state.board);
         });
@@ -146,15 +121,11 @@ class App extends Component {
       status = `${otherColor[this.state.player]} won`;
     }
 
-    if (status === this.state.player + ' won') {
-      // play_sound_effect('audio_applause');
-    }
-
     this.setState({
       words: words,
       gameStatus: status,
     }, () => {
-      if (this.state.previous_hints.length === 0) {
+      if (this.state.previousHints.length === 0) {
         this.handleSubmit();
       }
     });
@@ -167,17 +138,16 @@ class App extends Component {
     this.setState({isDebug: !this.state.isDebug});
 
   toggleHistory = () =>
-    this.setState({show_drawer: !this.state.show_drawer});
+    this.setState({showDrawer: !this.state.showDrawer});
 
   handleReveal = (i) => {
     if (this.state.gameStatus === 'playing') {
       const board = JSON.parse(JSON.stringify(this.state.board));
       board[i].seen = true;
 
-      if (board[i].color === this.state.player) {
-        play_sound_effect('audio_cards');
-      } else {
-        play_sound_effect('audio_cards');
+      playAudio('audio_cards');
+
+      if (board[i].color !== this.state.player) {
         // Flip over one of opponent's cards (choose first one)
         for (const card of board) {
           if (card.color === otherColor[this.state.player] && !card.seen) {
@@ -210,6 +180,7 @@ class App extends Component {
     this.handleUpdate();
   }
 
+
   render() {
 
     const debugInfo = this.state.isDebug ? (
@@ -219,74 +190,6 @@ class App extends Component {
       </div>
     ) : null;
 
-    const progress = this.state.awaitingServer ?
-      <CircularProgress size={20}/> : (
-        <Badge badgeContent={this.state.result.targets.length} secondary={true}>
-          {this.state.result.hint}
-        </Badge>
-      );
-
-    const actions = [
-      <FlatButton
-        label="Yes"
-        primary={true}
-        keyboardFocused={true}
-        onClick={this.handleStart}
-      />,
-      <FlatButton
-        label="No"
-        secondary={true}
-        onClick={this.handleClose}
-      />,
-    ];
-
-    const victory = (
-      <Dialog
-        title={`${this.state.gameStatus.split(' ')[0]} wins!`}
-        actions={actions}
-        modal={false}
-        open={this.state.gameStatus.includes('won')}
-        onRequestClose={this.handleClose}
-      >
-        Play again?
-      </Dialog>
-    );
-
-    const hint_history = (
-      <Drawer open={this.state.show_drawer}
-              docked={false}>
-        <AppBar title="Hint History"
-                iconElementLeft={<IconButton><NavigationClose /></IconButton>}
-                onLeftIconButtonClick={this.toggleHistory}/>
-        {this.state.previous_hints.map(hint =>
-          <MenuItem>
-            {hint.hint}
-            <Badge badgeContent={hint.num} secondary={true}/>
-          </MenuItem>
-        )}
-      </Drawer>
-    );
-
-    const hintControls = this.state.gameStatus === 'playing' ?
-      (
-        <div style={{display: 'inline-block'}}>
-          <RaisedButton
-            label="History"
-            onClick={this.toggleHistory}/>
-          <RaisedButton label='Next Hint' onClick={this.handleSubmit}
-                        backgroundColor={'#CE93D8'}
-                        style={{margin: 12, align: 'left'}}/>
-          {progress}
-        </div>
-      ) :
-      <div style={{display: 'inline-block'}}>
-        <RaisedButton label='Restart Game' onClick={this.handleStart} primary={true}
-                      style={{margin: 12, align: 'left'}}/>
-      </div>;
-
-
-
-
     const gameControls = (
       <MuiThemeProvider>
         <div style={{display: 'inline-block', float: 'left', marginLeft: '1em'}}>
@@ -294,10 +197,20 @@ class App extends Component {
           <Badge badgeContent={this.state.words.blue.length} primary={true}/>
         </div>
 
-        {hint_history}
-        {hintControls}
-        {victory}
+        <HintHistory showDrawer={this.state.showDrawer}
+                     previousHints={this.state.previousHints}
+                     toggleHistory={this.toggleHistory} />
 
+        <HintControls gameStatus={this.state.gameStatus}
+                      toggleHistory={this.toggleHistory}
+                      handleSubmit={this.handleSubmit}
+                      handleStart={this.handleStart}
+                      result={this.state.result}
+                      awaitingServer={this.state.awaitingServer} />
+
+        <GameEnd gameStatus={this.state.gameStatus}
+                 handleClose={this.handleClose}
+                 handleStart={this.handleStart} />
 
         <div id='debugTools' style={{display: 'inline-block', float: 'right', marginRight: '1em'}}>
           <Toggle label='Spymaster' onToggle={this.handleToggleSpymaster} toggled={this.state.isSpymaster}/>
