@@ -16,7 +16,7 @@ import { SERVER_URL } from '../data/constants'
 class HintHelper extends Component {
 
   state = {
-    words: ['hospital', 'doctor', 'drugs', 'cup', ''],
+    words: [''], // ['hospital', 'doctor', 'drugs', 'cup', ''],
     hints: [],
   }
 
@@ -38,10 +38,10 @@ class HintHelper extends Component {
   }
 
   handleAddWord = () => {
-    const wordsList = [...this.state.words]
-    wordsList.push('')
+    const wordList = [...this.state.words]
+    wordList.push('')
     this.setState({
-      words: wordsList,
+      words: wordList,
     })
   }
 
@@ -53,16 +53,27 @@ class HintHelper extends Component {
     })
   }
 
+  handleDeleteWord = (i) => {
+    if (this.state.words.length > 1) {
+      const wordList = [...this.state.words]
+      wordList.splice(i, 1)
+      this.setState({
+        words: wordList,
+      })
+    }
+  }
+
   render() {
 
     const words = this.state.words.map((word, i) =>
       <Paper style={{padding: '.0rem', margin: 'auto', width: "80%"}}>
-        <TextField hintText='.' value={word} onChange={(event) => this.handleChange(event, i)}/>
+        <RaisedButton labelColor={'red'} onClick={() => this.handleDeleteWord(i)} label={'X'}/> &nbsp;
+        <TextField hintText='' value={word} onChange={(event) => this.handleChange(event, i)}/>
       </Paper>
     )
 
     const hints = this.state.hints.map((hint, i) =>
-        <span style={{margin: '10px', display: 'inline-block'}}>{i}. {hint}</span>
+        <span style={{margin: '10px', display: 'inline-block'}}>{i+1}. {hint}</span>
 
     )
 
