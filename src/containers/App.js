@@ -223,8 +223,8 @@ class App extends Component {
       <BrowserRouter>
         <div className="App">
           <AppHeader/>
-          <Route exact path="/" component={gameBoard} />
-          <Route exact path="/helper" component={() => <HintHelper/>}/>
+          <Route exact path={process.env.PUBLIC_URL + "/"} component={gameBoard} />
+          <Route exact path={process.env.PUBLIC_URL + "/helper"} component={() => <HintHelper/>}/>
         </div>
       </BrowserRouter>
     );
