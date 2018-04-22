@@ -56,24 +56,28 @@ class HintHelper extends Component {
   render() {
 
     const words = this.state.words.map((word, i) =>
-      <Paper style={{padding: '.5rem', margin: 'auto', width: "80%"}}>
+      <Paper style={{padding: '.0rem', margin: 'auto', width: "80%"}}>
         <TextField hintText='.' value={word} onChange={(event) => this.handleChange(event, i)}/>
       </Paper>
     )
 
-    const hints = this.state.hints.map(hint =>
-      <span style={{margin: '10px'}}>{hint}</span>
+    const hints = this.state.hints.map((hint, i) =>
+        <span style={{margin: '10px', display: 'inline-block'}}>{i}. {hint}</span>
+
     )
 
     return (
-      <div>
+      <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
         <MuiThemeProvider>
           <RaisedButton onClick={this.handleAskHint} label={'Ask Bot!'} />
           {/*<RaisedButton onClick={this.handleAddWord} label={'Add New'} />*/}
-          <br/><br/>
+          <br/>
+
           {words}
-          <br/><br/>
-          {hints}
+          <br/>
+          <div style={{display: 'flex', width: '80%', flexWrap: 'wrap', justifyContent: 'space-evenly'}}>
+            {hints}
+          </div>
         </MuiThemeProvider>
       </div>
     )
