@@ -1,21 +1,13 @@
 // Modules
 import React, {Component} from 'react';
 import axios from 'axios';
-import _ from 'lodash'
+
+import { BrowserRouter, Route } from 'react-router-dom'
 
 // Material UI
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
-import FlatButton from 'material-ui/FlatButton';
-import RaisedButton from 'material-ui/RaisedButton'
 import Toggle from 'material-ui/Toggle';
 import Badge from 'material-ui/Badge';
-import CircularProgress from 'material-ui/CircularProgress';
-import Dialog from 'material-ui/Dialog';
-import Drawer from 'material-ui/Drawer';
-import AppBar from 'material-ui/AppBar';
-import IconButton from 'material-ui/IconButton';
-import NavigationClose from 'material-ui/svg-icons/navigation/close';
-import MenuItem from 'material-ui/MenuItem';
 
 // Components
 import GameCard from '../components/gameCard';
@@ -23,6 +15,7 @@ import AppHeader from '../components/appHeader';
 import GameEnd from '../components/gameEnd';
 import HintHistory from '../components/hintHistory';
 import HintControls from '../components/hintControls'
+import HintHelper from '../components/hintHelper'
 
 // CSS
 import './App.css';
@@ -32,8 +25,7 @@ import playAudio from '../utils/playAudio'
 import pickWords from '../utils/pickWords'
 
 // Constants
-const SERVER_URL = process.env.NODE_ENV === 'production'?
-  'https://codenamesai.herokuapp.com/api/' : 'http://127.0.0.1:5000/api/';
+import { SERVER_URL } from '../data/constants'
 
 const initialState = () => {
   return {
@@ -180,7 +172,6 @@ class App extends Component {
     this.handleUpdate();
   }
 
-
   render() {
 
     const debugInfo = this.state.isDebug ? (
@@ -219,19 +210,23 @@ class App extends Component {
       </MuiThemeProvider>
     );
 
+    const gameBoard = () => <div>
+                              {gameControls}
+                              <GameCard board={this.state.board}
+                                        isSpymaster={this.state.isSpymaster}
+                                        reveal={this.handleReveal}
+                                        isDebug={this.state.isDebug}/>
+                              {debugInfo}
+                            </div>
+
     return (
-      <div className="App">
-        <AppHeader/>
-
-        {gameControls}
-
-        <GameCard board={this.state.board}
-                  isSpymaster={this.state.isSpymaster}
-                  reveal={this.handleReveal}
-                  isDebug={this.state.isDebug}/>
-
-        {debugInfo}
-      </div>
+      <BrowserRouter>
+        <div className="App">
+          <AppHeader/>
+          <Route exact path="/" component={gameBoard} />
+          <Route exact path="/helper" component={() => <HintHelper/>}/>
+        </div>
+      </BrowserRouter>
     );
   }
 }

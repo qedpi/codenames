@@ -1,3 +1,5 @@
+
+
 const DEFAULT_WORDS = {
   red: ['lion', 'trip'],
   blue: ['Serengeti'],
