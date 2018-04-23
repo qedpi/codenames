@@ -63,10 +63,10 @@ const gameCard = props => {
                                        fontSize: '1rem',
                                        fontWeight: '600',
                                      }}
-                                     labelColor={props.isSpymaster || group.seen?
+                                     labelColor={props.isSpymaster || group.seen ?
                                        borderColorMap[group.color] : 'brown'}
                                      className='card'
-                                     id={group.word}
+                                     key={group.word}
                                      onClick={() => props.reveal(i)}
     />;
 
@@ -74,11 +74,11 @@ const gameCard = props => {
   });
 
   return (
-    <div className="boardWrapper">
-      <MuiThemeProvider>
+    <MuiThemeProvider>
+      <div className="boardWrapper">
         {cards}
-      </MuiThemeProvider>
-    </div>
+      </div>
+    </MuiThemeProvider>
   )
 };
 

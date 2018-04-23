@@ -8,8 +8,8 @@ const hintHistory = props => (
     <AppBar title="Hint History"
             iconElementLeft={<IconButton><NavigationClose /></IconButton>}
             onLeftIconButtonClick={props.toggleHistory}/>
-    {props.previousHints.map(hint =>
-      <MenuItem>
+    {props.previousHints.map((hint, i) =>
+      <MenuItem key={i}>
         {hint.hint}
         <Badge badgeContent={hint.num} secondary={true}/>
       </MenuItem>
